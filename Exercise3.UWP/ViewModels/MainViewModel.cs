@@ -54,20 +54,30 @@ namespace Exercise3.UWP.ViewModels
 
         public async Task<string> StartCompression(CompressionMode mode)
         {
-            if (SourceFile == null || OutputFile == null) return "Output file not selected, please try again";            
+            if (SourceFile == null || OutputFile == null) return "Output file does not exist, please try again";
+
+            var timingData = new StreamCompressor.CompressorData();
+            var stopwatch = Stopwatch.StartNew();
 
             var sourceStream = await SourceFile.OpenStreamForReadAsync().ConfigureAwait(false);
-            var outputStream = await OutputFile.OpenStreamForWriteAsync().ConfigureAwait(false);            
+            timingData.TimeToReadStream = stopwatch.ElapsedMilliseconds;
+
+            var outputStream = await OutputFile.OpenStreamForWriteAsync().ConfigureAwait(false);
+            timingData.TimeToWriteStream = stopwatch.ElapsedMilliseconds;            
 
             switch (mode)
             {
                 case CompressionMode.Compress:
-                    return StreamCompressor.Compress(ref sourceStream, ref outputStream).GetCompressionData();
+                    StreamCompressor.Compress(ref sourceStream, ref outputStream, ref timingData);
+                    timingData.AllOperationsComplete = stopwatch.ElapsedMilliseconds;
+                    return timingData.GetCompressionData();
                 case CompressionMode.Decompress:
-                    return StreamCompressor.Decompress(ref sourceStream, ref outputStream).GetDecompressionData();
+                    StreamCompressor.Decompress(ref sourceStream, ref outputStream, ref timingData);
+                    timingData.AllOperationsComplete = stopwatch.ElapsedMilliseconds;
+                    return timingData.GetDecompressionData();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
-            }
+            }            
         }
     }
 }

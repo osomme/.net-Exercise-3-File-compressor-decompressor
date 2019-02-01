@@ -8,7 +8,6 @@
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Grid
-        x:Name="ContentArea"
         Margin="{StaticResource MediumLeftRightMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
@@ -22,13 +21,13 @@
         <Grid
             Grid.Row="1" 
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <Border BorderBrush="#FF808080" HorizontalAlignment="Center" Height="375" Margin="0,0,0,0" VerticalAlignment="Center" Width="455" BorderThickness="5,5,5,5" RequestedTheme="Default" Background="#FFB6B6B6" AllowDrop="True">
+            <Border BorderBrush="#FF808080" HorizontalAlignment="Center" Height="375" Margin="0,0,0,0" VerticalAlignment="Center" Width="455" BorderThickness="5,5,5,5" RequestedTheme="Default" AllowDrop="True" Opacity="0.75" Background="#FFB6B6B6">
                 <dd:DragDropService.Configuration>
                     <dd:DropConfiguration
                         DropStorageItemsCommand="{x:Bind ViewModel.GetStorageItemsCommand}"/>
                 </dd:DragDropService.Configuration>
             </Border>
-            <TextBlock Text="{x:Bind ViewModel.TextOutput, Mode=OneWay}" HorizontalAlignment="Center" Margin="0,75,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="18" TextAlignment="DetectFromContent"/>
+            <TextBlock Text="{x:Bind ViewModel.TextOutput, Mode=OneWay}" HorizontalAlignment="Center" Margin="0,50,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="18" TextAlignment="DetectFromContent"/>
         </Grid>
     </Grid>
 </Page>

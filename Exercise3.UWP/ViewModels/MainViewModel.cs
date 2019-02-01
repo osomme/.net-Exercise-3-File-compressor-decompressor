@@ -45,7 +45,7 @@ namespace Exercise3.UWP.ViewModels
 
             SourceFile = (StorageFile) items[0];            
 
-            TextOutput = "Working...";            
+            TextOutput = "Working...";
             
             TextOutput = await ViewHandler.OnFileDropped(SourceFile.FileType == ".zip"
                 ? CompressionMode.Decompress

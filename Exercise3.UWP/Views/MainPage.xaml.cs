@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml;
 using Exercise3.UWP.ViewModels;
 
 using Windows.UI.Xaml.Controls;
-using Exercise3.UWP.Models;
+using Exercise3.UWP.Utils;
 
 namespace Exercise3.UWP.Views
 {
@@ -27,10 +25,10 @@ namespace Exercise3.UWP.Views
             switch (compressionMode)
             {
                 case CompressionMode.Compress:
-                    await LaunchCompressOutputPrompt().ConfigureAwait(false);
+                    await OpenFolderPickerPrompt($"{ViewModel.SourceFile.Name}.zip").ConfigureAwait(false);
                     break;
                 case CompressionMode.Decompress:
-                    await LaunchDecompressOutputPrompt().ConfigureAwait(false);
+                    await OpenFolderPickerPrompt(ViewModel.SourceFile.GetNameWithoutZipExtension()).ConfigureAwait(false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(compressionMode), compressionMode, null);
@@ -39,30 +37,20 @@ namespace Exercise3.UWP.Views
             return await ViewModel.StartCompression(compressionMode).ConfigureAwait(false);            
         }
 
-        private async Task LaunchCompressOutputPrompt()
+        private async Task OpenFolderPickerPrompt(string fileName)
         {
-            var fileSavePicker = new FileSavePicker();
-            fileSavePicker.FileTypeChoices.Add("Compressed file", new List<string> {".zip"});
-            fileSavePicker.SuggestedFileName = $"{ViewModel.SourceFile.Name}";
+            var folderPicker = new FolderPicker();
+            folderPicker.FileTypeFilter.Add("*");                  
 
-            var compressedFile = await fileSavePicker.PickSaveFileAsync();
-            if (compressedFile != null)
+            var folder = await folderPicker.PickSingleFolderAsync();
+                        
+            var file = await folder.CreateFileAsync(fileName,
+                CreationCollisionOption.ReplaceExisting);
+            
+            if (file != null)
             {
-                ViewModel.OutputFile = compressedFile;
-            }
-        }
-
-        private async Task LaunchDecompressOutputPrompt()
-        {
-            var fileSavePicker = new FileSavePicker();
-            fileSavePicker.FileTypeChoices.Add("Decompressed file", new List<string> {".txt"});
-            fileSavePicker.SuggestedFileName = $"{ViewModel.SourceFile.Name}";
-
-            var decompressedFile = await fileSavePicker.PickSaveFileAsync();
-            if (decompressedFile != null)
-            {                
-                ViewModel.OutputFile = decompressedFile;
-            }
+                ViewModel.OutputFile = file;
+            }            
         }
     }
 
